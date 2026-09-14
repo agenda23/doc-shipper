@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>__PAGE_TITLE__</title>
+<link rel="stylesheet" href="/assets/github-markdown.css" />
+<link rel="stylesheet" href="/assets/styles.css" />
+<script>
+// FOUC防止: テーマ確定前の描画を避けるため <head> 内で同期的に適用する（§3.3・§7.11）
+(function () {
+  try {
+    var saved = localStorage.getItem("doc-shipper-theme");
+    var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+</head>
+<body>
+<button id="drawer-toggle" class="drawer-toggle" aria-label="メニューを開く" aria-expanded="false">☰</button>
+<div class="layout">
+  <nav id="sidebar" class="sidebar" data-current="__CURRENT_HREF__">
+    <div class="sidebar-header">
+      <a href="/" class="site-title">__SITE_TITLE__</a>
+      <button id="theme-toggle" class="theme-toggle" aria-label="テーマ切り替え">◐</button>
+    </div>
+    <div class="sidebar-tree">
+__SIDEBAR_HTML__
+    </div>
+  </nav>
+  <div id="drawer-backdrop" class="drawer-backdrop"></div>
+  <main class="main">
+    <article class="markdown-body">
+__BODY_HTML__
+    </article>
+  </main>
+</div>
+<script src="/assets/sidebar.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "name": "doc-shipper",
+  "version": "0.1.0",
+  "description": "GitHubプライベートリポジトリ内のMarkdownドキュメントをBasic認証付きの静的サイトとして共有するCLIツール",
+  "type": "module",
+  "bin": {
+    "doc-shipper": "bin/run.js"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "keywords": [
+    "markdown",
+    "documentation",
+    "static-site",
+    "cli",
+    "cloudflare-pages",
+    "vercel",
+    "basic-auth"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agenda23/doc-shipper.git"
+  },
+  "homepage": "https://github.com/agenda23/doc-shipper#readme",
+  "bugs": {
+    "url": "https://github.com/agenda23/doc-shipper/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^0.9.0",
+    "archiver": "^7.0.1",
+    "commander": "^12.1.0",
+    "execa": "^9.5.1",
+    "fast-glob": "^3.3.2",
+    "github-markdown-css": "^5.8.1",
+    "gray-matter": "^4.0.3",
+    "marked": "^14.1.3",
+    "shiki": "^1.22.0"
+  },
+  "devDependencies": {
+    "@types/archiver": "^6.0.2",
+    "@types/node": "^20.16.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3"
+  }
+}

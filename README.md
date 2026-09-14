@@ -8,9 +8,10 @@ GitHub アカウントを持たない社外関係者へ **Basic 認証付きの�
 - 画像・相対リンクを自動解決し、Cloudflare Pages / Vercel へワンコマンドでデプロイ
 
 > [!NOTE]
-> **現在は仕様策定段階です。** このリポジトリには現時点で実装は含まれていません。
-> 詳細な機能・システム仕様は [`documents/spec.md`](documents/spec.md) を参照してください。
-> 以下は確定済みの想定インターフェースです。
+> **実装中です。** コア機能（Markdown収集・リンク/アセット解決・HTML生成）、`dir`/`zip`出力、
+> および `cloudflare` ターゲットへの実デプロイは動作確認済みです。**`vercel` への実デプロイは未検証**です。
+> 詳細な仕様は [`documents/spec.md`](documents/spec.md)、実装の進捗・既知の課題は
+> [`documents/progress.md`](documents/progress.md) を参照してください。
 
 ## 特徴
 
@@ -27,10 +28,14 @@ GitHub アカウントを持たない社外関係者へ **Basic 認証付きの�
 
 ## 動作要件
 
-- Node.js v18 以上
+- Node.js v20 LTS 以上（v18 は EOL のため対象外）
 - デプロイ系ターゲットを使う場合: `wrangler`（v3 以上）または `vercel` CLI（未導入時は `npx <pkg>@latest` へ自動フォールバック）
 
 ## 使い方
+
+> [!NOTE]
+> 以下は npm 公開後の想定インターフェースです。**現時点ではまだ npm に公開していないため `npx doc-shipper` は動作しません。**
+> ローカルで試す場合は [開発中の使用方法](#開発中の使用方法) を参照してください。
 
 インストール不要で実行できます。
 
@@ -157,10 +162,60 @@ dist/
 → `parser`（`marked` + `shiki` でレンダリング、対応表を適用してリンク書き換え）
 → `tree`（サイドバー生成）→ `builder`（静的 HTML 出力）→ `targets/*`（ターゲット別デプロイ）。
 
-## 開発
+## 開発中の使用方法
 
-このリポジトリは現在、仕様（[`documents/spec.md`](documents/spec.md)）のみで構成されています。
-実装は TypeScript / ESM で行い、ビルドは `tsup` を使用する想定です。
+npm には未公開のため、リポジトリを clone してローカルでビルドしたものを直接実行します。
+
+### セットアップ
+
+```bash
+git clone <このリポジトリのURL>
+cd doc-shipper
+npm install
+npm run build   # tsup で src/ を dist/ へトランスパイル（テンプレート一式も dist/templates/ へコピー）
+```
+
+### 実行方法（2通り）
+
+**A. `node bin/run.js` で直接実行**（ビルド後、追加のインストール操作なしで試せる）
+
+```bash
+node bin/run.js \
+  --dir "docs/spec:仕様書" \
+  --target dir \
+  --out ./dist-preview
+```
+
+**B. `npm link` でグローバルに `doc-shipper` コマンドとして使う**
+
+```bash
+npm link          # このリポジトリの bin を doc-shipper コマンドとして登録
+cd /path/to/other-repo
+doc-shipper --dir "docs/spec:仕様書" --target dir --out ./dist-preview
+# 不要になったら: npm unlink -g doc-shipper
+```
+
+> nodenv / rbenv 系のバージョン管理を使っている場合、`npm link` 直後は shim が未生成で
+> `command not found: doc-shipper` になることがあります。その場合は `nodenv rehash` を実行してください。
+
+いずれの方法でも、上記「使い方」節のオプション（`--dir` / `--target` / `--auth` 等）はそのまま使えます。まず認証やデプロイを伴わない `--target dir` で `./dist-preview` に出力し、生成された `index.html` をブラウザで開いて確認するのが手早い動作確認方法です。
+
+### コード変更時のループ
+
+```bash
+npm run dev         # tsup --watch（保存するたびに dist/ を再ビルド）
+npm run typecheck   # tsc --noEmit
+npm test            # vitest run
+```
+
+`npm run dev` を起動したまま、別ターミナルで `node bin/run.js ...`（または `npm link` 済みなら `doc-shipper ...`）を実行すれば、コード変更を都度反映しながら試せます。
+
+### 現状の制約
+
+- `cloudflare` ターゲットへの実デプロイは動作確認済みです。**`vercel` ターゲットは実デプロイ未検証**です（`vercel` CLI の実機テストが必要）。認証やデプロイを伴わないローカル確認には `dir` / `zip` ターゲットも使えます。
+- 実装の詳細な進捗・既知の課題は [`documents/progress.md`](documents/progress.md) を参照してください。
+
+実装は TypeScript / ESM で行い、ビルドは `tsup`（`bundle: false` でディレクトリ構造を保ったままトランスパイル）を使用しています。
 
 ## ライセンス
 

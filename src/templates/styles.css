@@ -1,0 +1,215 @@
+:root {
+  color-scheme: light dark;
+  --ds-bg: #ffffff;
+  --ds-fg: #1f2328;
+  --ds-border: #d1d9e0;
+  --ds-sidebar-bg: #f6f8fa;
+  --ds-link: #0969da;
+  --ds-hover-bg: #eaeef2;
+  --ds-active-bg: #ddf4ff;
+  --shiki-dark-bg: transparent;
+}
+
+html[data-theme="dark"] {
+  --ds-bg: #0d1117;
+  --ds-fg: #e6edf3;
+  --ds-border: #30363d;
+  --ds-sidebar-bg: #010409;
+  --ds-link: #4493f8;
+  --ds-hover-bg: #161b22;
+  --ds-active-bg: #0c2d6b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--ds-bg);
+  color: var(--ds-fg);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: var(--ds-link);
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--ds-sidebar-bg);
+  border-right: 1px solid var(--ds-border);
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.site-title {
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--ds-fg);
+}
+
+.theme-toggle,
+.drawer-toggle {
+  background: none;
+  border: 1px solid var(--ds-border);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--ds-fg);
+  font-size: 16px;
+  padding: 4px 8px;
+}
+
+.sidebar-tree {
+  padding: 8px;
+}
+
+.tree-node {
+  margin: 0;
+}
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: 6px;
+}
+
+.tree-row:hover {
+  background: var(--ds-hover-bg);
+}
+
+.tree-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ds-fg);
+  width: 20px;
+  flex-shrink: 0;
+  font-size: 11px;
+  transition: transform 0.15s ease;
+  padding: 6px 0;
+}
+
+.tree-node.is-collapsed > .tree-row > .tree-toggle {
+  transform: rotate(-90deg);
+}
+
+.tree-toggle.tree-toggle-spacer {
+  visibility: hidden;
+  cursor: default;
+}
+
+.tree-link {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px 6px 2px;
+  text-decoration: none;
+  color: var(--ds-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-node.is-current > .tree-row {
+  background: var(--ds-active-bg);
+}
+
+.tree-node.is-current > .tree-row > .tree-link {
+  font-weight: 600;
+}
+
+.tree-children {
+  list-style: none;
+  margin: 0;
+  padding-left: 16px;
+  border-left: 1px solid var(--ds-border);
+}
+
+.tree-node.is-collapsed > .tree-children {
+  display: none;
+}
+
+.drawer-toggle {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 20;
+}
+
+.drawer-backdrop {
+  display: none;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 40px;
+}
+
+.markdown-body {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* shiki のデュアルテーマ出力に合わせたダークモード切り替え（§8.3） */
+html[data-theme="dark"] .shiki,
+html[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg, transparent) !important;
+}
+
+@media (max-width: 768px) {
+  .drawer-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 15;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  }
+
+  body.drawer-open .sidebar {
+    transform: translateX(0);
+  }
+
+  body.drawer-open .drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 14;
+  }
+
+  .main {
+    padding: 64px 16px 32px;
+  }
+}
